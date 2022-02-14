@@ -38,6 +38,13 @@ def train_model(X_train, Y_train):
     return knn
 
 
+def transform_user_input(df, user_input):
+    user_input = [[age, bmi, glucose, insulin, homa, leptin, adiponectin, resistin, mcp1]]
+    sc = StandardScaler()
+    sc.fit_transform(df.iloc[:, 0:9].values)
+    return sc.transform(user_input)
+
+
 if __name__ == '__main__':
     st.set_page_config(page_title='Breast Cancer predictor', layout='wide')
     st.title('Breast Cancer Prediction Web App')
@@ -66,7 +73,8 @@ if __name__ == '__main__':
             resistin = st.number_input('Resistin (ng/mL)', min_value=0.0000, format="%.4f", step=0.0001)
             mcp1 = st.number_input('MCP-1(pg/dL)', min_value=0.0000, format="%.4f", step=0.0001)
             if st.form_submit_button('Submit'):
-                prediction = model.predict([[age, bmi, glucose, insulin, homa, leptin, adiponectin, resistin, mcp1]])[0]
+                user_input = transform_user_input(df, [age, bmi, glucose, insulin, homa, leptin, adiponectin, resistin, mcp1])
+                prediction = model.predict(user_input)[0]
     st.header('Result')
     if prediction:
         if prediction == 1:
